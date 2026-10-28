@@ -1,0 +1,10 @@
+{
+  "name": "Prime Movies",
+  "short_name": "Prime",
+  "start_url": "/prime-movies/",
+  "scope": "/prime-movies/",
+  "display": "standalone",
+  "background_color": "#f6f5f2",
+  "theme_color": "#1e1d1b",
+  "icons": [{ "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }]
+}

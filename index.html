@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prime Movies</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prime">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --bg:#f6f5f2; --panel:#ffffff; --fg:#1d1c1a; --muted:#6b6862; --line:#dedbd4;
+  --accent:#1f5f8a; --chip:#ece9e2; --flag:#7a5d00; --flagbg:#fbf1cf;
+  --display:"Archivo Narrow","Arial Narrow",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151413; --panel:#1e1d1b; --fg:#ece9e3; --muted:#a39f97; --line:#34322e;
+  --accent:#7cb6de; --chip:#2a2825; --flag:#f0cf6a; --flagbg:#3a3215; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151413; --panel:#1e1d1b; --fg:#ece9e3; --muted:#a39f97; --line:#34322e;
+  --accent:#7cb6de; --chip:#2a2825; --flag:#f0cf6a; --flagbg:#3a3215; color-scheme:dark}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:28px;padding-bottom:56px}
+h1{font-family:var(--display);font-weight:700;font-size:2rem;letter-spacing:.01em;margin:0}
+.sub{color:var(--muted);margin:4px 0 0}
+.stats{display:flex;flex-wrap:wrap;margin-top:14px;font-family:var(--display);color:var(--muted);font-variant-numeric:tabular-nums}
+.stats>span{margin:0 18px 6px 0}
+.stats b{color:var(--fg)}
+.bar{position:-webkit-sticky;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-top:12px;padding-bottom:4px;margin-top:16px;border-bottom:1px solid var(--line)}
+.bar>*+*{margin-top:10px}
+#q{width:100%;font:inherit;font-size:16px;-webkit-appearance:none;appearance:none;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg)}
+.row{display:flex;flex-wrap:wrap;align-items:center}
+.row>*{margin:0 8px 8px 0}
+select{font-family:var(--display);font-size:.88rem;letter-spacing:.02em;border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:6px;padding:5px 8px;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.sl{font-family:var(--display);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+#list{margin-top:8px}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:block;padding:10px 4px;-webkit-tap-highlight-color:transparent}
+summary::-webkit-details-marker{display:none}
+.sum{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-gap:2px 12px;gap:2px 12px}
+.t{font-weight:600;min-width:0}
+.by{grid-column:1;color:var(--muted);font-size:.9rem;min-width:0}
+.tags{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:flex-end}
+.tags>*+*{margin-top:4px}
+.tag{font-family:var(--display);font-size:.78rem;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
+.body{padding:2px 4px 16px}
+.film{display:grid;grid-template-columns:110px minmax(0,1fr);grid-gap:4px 14px;gap:4px 14px;font-size:.93rem;margin:0}
+.film dt{font-family:var(--display);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-top:2px}
+.film dd{margin:0;min-width:0}
+.film a{color:var(--accent)}
+.gtag{font-family:var(--display);font-size:.82rem;letter-spacing:.02em}
+.empty{color:var(--muted);padding:24px 4px}
+#more{display:none;margin:18px auto 0;font-family:var(--display);font-size:1rem;border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:10px 20px;min-height:44px;cursor:pointer;-webkit-appearance:none}
+#more.on{display:block}
+footer{margin-top:28px;color:var(--muted);font-size:.85rem;max-width:65ch}
+@media (max-width:480px){.film{grid-template-columns:1fr}.film dt{padding-top:6px}}
+@media (min-width:700px){body{font-size:17px}.film{grid-template-columns:130px minmax(0,1fr)}h1{font-size:2.4rem}}
+@media (pointer:coarse){select{min-height:44px;padding:8px 10px;font-size:1rem}#q{padding:12px 14px;font-size:17px}summary{padding:14px 6px}.film a{display:inline-block;padding:4px 0}}
+#upd{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:20;display:none;align-items:center;background:var(--fg);color:var(--bg);border-radius:999px;padding:6px 6px 6px 16px;box-shadow:0 4px 18px rgba(0,0,0,.25);font-family:var(--display);font-size:.95rem;white-space:nowrap}
+#upd.on{display:-webkit-flex;display:flex}
+#upd>*+*{margin-left:10px}
+#upd button{font:inherit;border:0;border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer;-webkit-appearance:none}
+#updGo{background:var(--accent);color:#fff;font-weight:700}
+#updLater{background:transparent;color:var(--bg);opacity:.75}
+#off{display:none;font-family:var(--display);font-size:.8rem;letter-spacing:.04em;color:var(--flag);background:var(--flagbg);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+#off.on{display:inline-block}
+.ver{font-family:var(--display);font-size:.85rem;letter-spacing:.03em;color:var(--muted)}
+#pickBtn{margin-top:14px;font-family:var(--display);font-size:1rem;font-weight:700;letter-spacing:.02em;background:var(--accent);color:#fff;border:0;border-radius:999px;padding:10px 20px;min-height:44px;cursor:pointer;-webkit-appearance:none}
+#pk{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;background:rgba(0,0,0,.45);padding:16px;overflow:auto;-webkit-overflow-scrolling:touch}
+#pk.on{display:block}
+.pkCard{max-width:560px;margin:10vh auto 0;background:var(--panel);color:var(--fg);border-radius:12px;padding:22px 22px 16px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.pkCard h2{font-family:var(--display);font-size:1.6rem;margin:0 0 4px}
+.pkMeta,.pkWhy{color:var(--muted);font-size:.92rem;margin:0 0 10px}
+.pkWhy{font-family:var(--display);letter-spacing:.02em;border-top:1px solid var(--line);padding-top:10px}
+.pkCard a{color:var(--accent)}
+.pkBtns{display:flex;flex-wrap:wrap;margin-top:6px}
+.pkBtns button{font-family:var(--display);font-size:.95rem;border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:8px 16px;min-height:44px;margin:6px 8px 0 0;cursor:pointer;-webkit-appearance:none}
+#pkAgain{background:var(--accent);border-color:var(--accent);color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Prime Movies</h1>
+  <p class="sub">Every movie included with your Prime membership, as catalogued from Amazon.</p>
+  <p class="sub ver"><span id="ver"></span><span id="off">Offline: saved copy</span></p>
+  <div class="stats" id="stats"></div>
+  <button type="button" id="pickBtn">Pick a movie for right now</button>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search title, director or actor…" aria-label="Search the catalogue">
+    <div class="row">
+      <label class="sl" for="gen">Genre</label>
+      <select id="gen"><option value="">All</option></select>
+      <label class="sl" for="rat">Rating</label>
+      <select id="rat"><option value="0">Any</option><option value="3.5">3.5+</option><option value="4">4.0+</option><option value="4.5">4.5+</option></select>
+      <label class="sl" for="rev">Reviews</label>
+      <select id="rev"><option value="0">Any</option><option value="100">100+</option><option value="1000">1,000+</option><option value="10000">10,000+</option></select>
+      <label class="sl" for="sort">Sort</label>
+      <select id="sort"><option value="title">Title</option><option value="rating">Rating</option><option value="reviews">Most reviewed</option><option value="director">Director</option></select>
+    </div>
+  </div>
+
+  <div id="list"></div>
+  <button type="button" id="more">Show more</button>
+  <div id="pk" role="dialog" aria-modal="true" aria-label="Movie pick"><div class="pkCard"><div id="pkBody"></div><div class="pkBtns"><button type="button" id="pkFind">Show in list</button><button type="button" id="pkAgain">Pick another</button><button type="button" id="pkClose">Close</button></div></div></div>
+  <div id="upd" role="status" aria-live="polite"><span>Update available</span><button type="button" id="updGo">Update now</button><button type="button" id="updLater">Later</button></div>
+
+  <footer>Titles, star ratings, review counts, genres, directors and cast are from Amazon's Prime Video search listings on the date shown above. Prime's catalogue changes often, so a title here may have left Prime or moved to a paid channel; check the Amazon page before planning around it. Ratings are Amazon customer ratings out of 5, not IMDb. The picker draws from movies rated 4.0+ with at least 500 reviews that match your current filters.</footer>
+</div>
+
+<script src="collection.js"></script>
+<script>
+/* ES2017, no optional chaining: runs on iOS 12 Safari. */
+(function(){
+  var P=window.PRIME||{rows:[],genres:[]};
+  var G=P.genres,ROWS=P.rows;
+  var $=function(id){return document.getElementById(id)};
+  var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+  var art=function(t){return t.replace(/^(The|A|An) /i,"")};
+  // row: [title, rating, reviews, genreIdx[], director, stars, asin]
+  var ITEMS=ROWS.map(function(r,ix){
+    return {ix:ix,t:r[0],r:r[1],n:r[2],g:r[3],d:r[4],s:r[5],a:r[6],k:art(r[0]).toLowerCase(),
+      ln:(r[4].split(",")[0].trim().split(" ").pop()||"~").toLowerCase(),
+      hay:(r[0]+" "+r[4]+" "+r[5]).toLowerCase()};
+  });
+  var st={q:"",gen:-1,rat:0,rev:0,sort:"title"},PAGE=100,shown=PAGE,last=[];
+  G.forEach(function(g,i){$("gen").insertAdjacentHTML("beforeend",'<option value="'+i+'">'+esc(g)+'</option>')});
+  var qt=null;
+  $("q").oninput=function(e){var v=e.target.value;clearTimeout(qt);qt=setTimeout(function(){st.q=v.toLowerCase().trim();shown=PAGE;render()},250)};
+  $("gen").onchange=function(e){st.gen=+e.target.value;if(e.target.value==="")st.gen=-1;shown=PAGE;render()};
+  $("rat").onchange=function(e){st.rat=+e.target.value;shown=PAGE;render()};
+  $("rev").onchange=function(e){st.rev=+e.target.value;shown=PAGE;render()};
+  $("sort").onchange=function(e){st.sort=e.target.value;shown=PAGE;render()};
+  $("more").onclick=function(){shown+=PAGE;draw()};
+  var fmtN=function(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,"")+"K":String(n)};
+  var link=function(i){return "https://www.amazon.com/dp/"+i.a};
+  function filtered(){
+    var words=st.q.split(/\s+/).filter(Boolean);
+    return ITEMS.filter(function(i){
+      if(st.gen>=0&&i.g.indexOf(st.gen)<0)return false;
+      if(st.rat&&i.r<st.rat)return false;
+      if(st.rev&&i.n<st.rev)return false;
+      for(var w=0;w<words.length;w++)if(i.hay.indexOf(words[w])<0)return false;
+      return true;
+    });
+  }
+  function render(){
+    var r=filtered();
+    var T=function(a,b){return a.k<b.k?-1:a.k>b.k?1:0};
+    r.sort(function(a,b){
+      if(st.sort==="rating")return (b.r-a.r)||(b.n-a.n)||T(a,b);
+      if(st.sort==="reviews")return (b.n-a.n)||T(a,b);
+      if(st.sort==="director")return (a.ln<b.ln?-1:a.ln>b.ln?1:0)||T(a,b);
+      return T(a,b);
+    });
+    last=r;draw();
+    $("stats").innerHTML='<span><b>'+ITEMS.length.toLocaleString()+'</b> movies</span><span>Showing <b>'+r.length.toLocaleString()+'</b></span>';
+  }
+  function row(i){
+    var gn=i.g.map(function(x){return G[x]}).join(", ");
+    return '<details><summary><div class="sum"><span class="t">'+esc(i.t)+'</span><span class="tags">'+(i.r?'<span class="tag">★ '+esc(i.r.toFixed(1))+'</span>':"")+(i.n?'<span class="tag">'+fmtN(i.n)+' reviews</span>':"")+'</span><span class="by">'+esc(i.d)+(gn?' <span class="gtag">· '+esc(gn)+'</span>':"")+'</span></div></summary>'+
+      '<div class="body"><dl class="film">'+(i.d?'<dt>Director</dt><dd>'+esc(i.d)+'</dd>':"")+(i.s?'<dt>Starring</dt><dd>'+esc(i.s)+'</dd>':"")+(gn?'<dt>Genre</dt><dd>'+esc(gn)+'</dd>':"")+(i.r?'<dt>Rating</dt><dd>'+esc(i.r.toFixed(1))+' / 5 from '+i.n.toLocaleString()+' reviews</dd>':"")+'<dt>Watch</dt><dd><a href="'+link(i)+'" target="_blank" rel="noopener">Open on Amazon</a></dd></dl></div></details>';
+  }
+  function draw(){
+    var r=last;
+    $("list").innerHTML=r.length?r.slice(0,shown).map(row).join(""):'<p class="empty">Nothing matches. Clear the search or loosen a filter.</p>';
+    $("more").className=r.length>shown?"on":"";
+    $("more").textContent="Show more ("+(r.length-Math.min(shown,r.length)).toLocaleString()+" left)";
+  }
+  render();
+  $("ver").textContent="Build "+(P.build||"?")+" · catalogued "+(P.updated||"");
+  // picker
+  function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+  function pick(){
+    var pool=filtered().filter(function(i){return i.r>=4&&i.n>=500});
+    var recent=ls("prime-recent")||[];
+    var fresh=pool.filter(function(i){return recent.indexOf(i.a)<0});if(fresh.length)pool=fresh;
+    if(!pool.length){$("pkBody").innerHTML='<p class="pkWhy">No movie rated 4.0+ with 500+ reviews matches your filters. Loosen them and try again.</p>';$("pk").className="on";return}
+    // weight toward higher rating and more reviews
+    var tot=0,w=pool.map(function(i){var x=Math.pow(i.r-3.5,2)*Math.log(i.n);tot+=x;return x});
+    var x=Math.random()*tot,ch=pool[0];for(var k=0;k<pool.length;k++){x-=w[k];if(x<=0){ch=pool[k];break}}
+    recent.unshift(ch.a);ls("prime-recent",recent.slice(0,20));
+    var gn=ch.g.map(function(x){return G[x]}).join(", ");
+    $("pkBody").innerHTML='<h2>'+esc(ch.t)+'</h2><p class="pkMeta">'+esc(ch.d)+' · ★ '+ch.r.toFixed(1)+' · '+fmtN(ch.n)+' reviews</p>'+(ch.s?'<p>'+esc(ch.s)+'</p>':"")+'<p><a href="'+link(ch)+'" target="_blank" rel="noopener">Open on Amazon</a></p><p class="pkWhy">'+esc(gn||"No genre listed")+' · from '+pool.length.toLocaleString()+' candidates</p>';
+    $("pkFind").onclick=function(){$("pk").className="";var q=$("q");q.value=ch.t;q.dispatchEvent(new Event("input"));setTimeout(function(){var d=document.querySelector("#list details");if(d){d.open=true;d.scrollIntoView()}},400)};
+    $("pk").className="on";
+  }
+  $("pickBtn").onclick=pick;$("pkAgain").onclick=pick;$("pkClose").onclick=function(){$("pk").className=""};
+  $("pk").onclick=function(ev){if(ev.target===$("pk"))$("pk").className=""};
+})();
+</script>
+<script>
+(function(){
+  var off=document.getElementById("off"),upd=document.getElementById("upd");
+  function net(){off.className=navigator.onLine?"":"on"}
+  window.addEventListener("online",net);window.addEventListener("offline",net);net();
+  if(!("serviceWorker" in navigator)||(location.hostname!=="comstocd.github.io"&&location.hostname!=="localhost"))return;
+  var waiting=null,refreshing=false;
+  function show(w){waiting=w;upd.className="on"}
+  function watch(w){w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller)show(w)})}
+  navigator.serviceWorker.register("sw.js",{scope:"./"}).then(function(reg){
+    if(reg.waiting&&navigator.serviceWorker.controller)show(reg.waiting);
+    if(reg.installing)watch(reg.installing);
+    reg.addEventListener("updatefound",function(){if(reg.installing)watch(reg.installing)});
+    function check(){if(navigator.onLine)reg.update().catch(function(){})}
+    check();
+    document.addEventListener("visibilitychange",function(){if(!document.hidden)check()});
+    setInterval(check,3600000);
+  }).catch(function(){});
+  var asked=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){if(asked&&!refreshing){refreshing=true;location.reload()}});
+  document.getElementById("updGo").onclick=function(){asked=true;if(waiting)waiting.postMessage({type:"SKIP_WAITING"});else location.reload()};
+  document.getElementById("updLater").onclick=function(){upd.className="";setTimeout(function(){if(waiting)upd.className="on"},3600000)};
+})();
+</script>
+</body>
+</html>
